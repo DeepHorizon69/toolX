@@ -1,0 +1,2256 @@
+{
+  "schemaVersion": 1,
+  "applicationVersion": "0.2.1",
+  "commands": [
+    {
+      "id": "system.os",
+      "name": "Operating system",
+      "description": "Edition, build, architecture and Windows directory.",
+      "category": "System Information",
+      "keywords": [
+        "os"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.os",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.computer",
+      "name": "Computer information",
+      "description": "Manufacturer, model, memory and computer role.",
+      "category": "System Information",
+      "keywords": [
+        "computer"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.computer",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.updates",
+      "name": "Installed updates",
+      "description": "Updates reported by Get-HotFix; not a complete servicing history.",
+      "category": "System Information",
+      "keywords": [
+        "updates"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "system.updates",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.uptime",
+      "name": "System uptime",
+      "description": "Time since the last operating system boot.",
+      "category": "System Information",
+      "keywords": [
+        "uptime"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.uptime",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.environment",
+      "name": "Environment information",
+      "description": "Allowlisted paths, runtime versions and process bitness.",
+      "category": "System Information",
+      "keywords": [
+        "environment"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.environment",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.locale",
+      "name": "Locale and time zone",
+      "description": "Culture, display language and local time zone.",
+      "category": "System Information",
+      "keywords": [
+        "locale"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.locale",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.ip",
+      "name": "IP configuration",
+      "description": "Full local IP configuration.",
+      "category": "Networking",
+      "keywords": [
+        "ip"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "network.ip",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:ipconfig.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "TerminateOwnedProcess"
+    },
+    {
+      "id": "network.ping",
+      "name": "Ping",
+      "description": "Four ICMP probes to a target you provide.",
+      "category": "Networking",
+      "keywords": [
+        "ping",
+        "icmp",
+        "latency"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "network.ping",
+      "parameters": [
+        {
+          "name": "host",
+          "type": "Host",
+          "label": "Target hostname or IP",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:ping.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "UserTarget",
+      "cancellation": "TerminateOwnedProcess"
+    },
+    {
+      "id": "network.trace",
+      "name": "Traceroute",
+      "description": "Bounded route tracing without reverse DNS lookups.",
+      "category": "Networking",
+      "keywords": [
+        "trace"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "network.trace",
+      "parameters": [
+        {
+          "name": "host",
+          "type": "Host",
+          "label": "Target hostname or IP",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:tracert.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "UserTarget",
+      "cancellation": "TerminateOwnedProcess"
+    },
+    {
+      "id": "network.loss",
+      "name": "Packet loss test",
+      "description": "Twenty ICMP probes with a loss and latency summary.",
+      "category": "Networking",
+      "keywords": [
+        "loss"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "network.loss",
+      "parameters": [
+        {
+          "name": "host",
+          "type": "Host",
+          "label": "Target hostname or IP",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "UserTarget",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.dns",
+      "name": "DNS lookup",
+      "description": "Query your configured DNS service for a name and record type.",
+      "category": "Networking",
+      "keywords": [
+        "dns"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "network.dns",
+      "parameters": [
+        {
+          "name": "host",
+          "type": "Host",
+          "label": "DNS name",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        },
+        {
+          "name": "recordType",
+          "type": "Choice",
+          "label": "Record type",
+          "required": true,
+          "default": "A",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "A",
+            "AAAA",
+            "CNAME",
+            "MX",
+            "NS",
+            "TXT",
+            "PTR"
+          ]
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Resolve-DnsName"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "UserTarget",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.arp",
+      "name": "ARP table",
+      "description": "Current IPv4 neighbor cache.",
+      "category": "Networking",
+      "keywords": [
+        "arp"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "network.arp",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:arp.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "TerminateOwnedProcess"
+    },
+    {
+      "id": "network.routes",
+      "name": "Routing table",
+      "description": "Current IPv4 and IPv6 routing tables.",
+      "category": "Networking",
+      "keywords": [
+        "routes"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "network.routes",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:route.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "TerminateOwnedProcess"
+    },
+    {
+      "id": "network.connections",
+      "name": "Network connections",
+      "description": "Connections and listening ports with process IDs.",
+      "category": "Networking",
+      "keywords": [
+        "connections"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "network.connections",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:netstat.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "TerminateOwnedProcess"
+    },
+    {
+      "id": "network.port",
+      "name": "TCP port test",
+      "description": "Try a TCP connection to your target, with a five-second connection wait.",
+      "category": "Networking",
+      "keywords": [
+        "port"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "network.port",
+      "parameters": [
+        {
+          "name": "host",
+          "type": "Host",
+          "label": "Target hostname or IP",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        },
+        {
+          "name": "port",
+          "type": "Integer",
+          "label": "TCP port",
+          "required": true,
+          "default": null,
+          "minimum": 1,
+          "maximum": 65535,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "UserTarget",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.adapters",
+      "name": "Network adapters",
+      "description": "Adapter state, interface identity and link speed.",
+      "category": "Networking",
+      "keywords": [
+        "adapters"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "network.adapters",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-NetAdapter"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.flush-dns",
+      "name": "Flush DNS cache",
+      "description": "Clear the local DNS resolver cache.",
+      "category": "Networking",
+      "keywords": [
+        "flush-dns"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "network.flush-dns",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:ipconfig.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Clear the local DNS resolver cache.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "hardware.cpu",
+      "name": "CPU information",
+      "description": "Processor model, cores and logical processors.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "cpu"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.cpu",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.memory",
+      "name": "RAM information",
+      "description": "Physical memory module capacity, speed and location.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "memory"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.memory",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.gpu",
+      "name": "GPU information",
+      "description": "Display adapters and driver versions.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "gpu"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.gpu",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.board",
+      "name": "Motherboard information",
+      "description": "Board manufacturer and model.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "board"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.board",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.bios",
+      "name": "BIOS information",
+      "description": "Firmware manufacturer, version and release date.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "bios"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.bios",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.disks",
+      "name": "Physical disk information",
+      "description": "Device model, interface and capacity.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "disks"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.disks",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.disk-health",
+      "name": "Storage health indicators",
+      "description": "Driver-provided status and reliability counters; missing values do not imply health.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "disk-health"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.disk-health",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-PhysicalDisk"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "storage.layout",
+      "name": "Partition layout",
+      "description": "Local disk partitions and disk associations.",
+      "category": "Storage Management",
+      "keywords": [
+        "layout"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "storage.layout",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "storage.volumes",
+      "name": "Volume information",
+      "description": "Drive labels, filesystem types and drive types.",
+      "category": "Storage Management",
+      "keywords": [
+        "volumes"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "storage.volumes",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "storage.space",
+      "name": "Available disk space",
+      "description": "Fixed local volume size and free space.",
+      "category": "Storage Management",
+      "keywords": [
+        "space"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "storage.space",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "storage.hash",
+      "name": "Verify file checksum",
+      "description": "Compute SHA-256 and optionally compare an expected checksum.",
+      "category": "Storage Management",
+      "keywords": [
+        "hash"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "storage.hash",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "LocalFile",
+          "label": "Local file",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        },
+        {
+          "name": "expected",
+          "type": "Sha256",
+          "label": "Expected SHA-256 (optional)",
+          "required": false,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-FileHash"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "storage.management",
+      "name": "Disk Management",
+      "description": "Open the Windows partition and volume administration tool.",
+      "category": "Storage Management",
+      "keywords": [
+        "management"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Mmc",
+      "targetId": "storage.management",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:mmc.exe"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Opens an administrative interface whose controls can modify Windows. Its subsequent actions are outside the toolkit.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "processes.list",
+      "name": "Running processes",
+      "description": "Snapshot of PID, cumulative CPU time and working set, not live CPU percentage.",
+      "category": "Processes and Services",
+      "keywords": [
+        "list"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "processes.list",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-Process"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "processes.resource-monitor",
+      "name": "Resource Monitor",
+      "description": "Open Windows Resource Monitor; its controls can modify running processes.",
+      "category": "Processes and Services",
+      "keywords": [
+        "resource-monitor"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Executable",
+      "targetId": "processes.resource-monitor",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:resmon.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Opens an administrative interface whose controls can modify Windows. Its subsequent actions are outside the toolkit.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "processes.task-manager",
+      "name": "Task Manager",
+      "description": "Open Task Manager; its controls can terminate programs.",
+      "category": "Processes and Services",
+      "keywords": [
+        "task-manager"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Executable",
+      "targetId": "processes.task-manager",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:taskmgr.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Opens an administrative interface whose controls can modify Windows. Its subsequent actions are outside the toolkit.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "processes.services",
+      "name": "Windows services",
+      "description": "List service status without changing services.",
+      "category": "Processes and Services",
+      "keywords": [
+        "services"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "processes.services",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-Service"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "processes.startup",
+      "name": "Startup programs",
+      "description": "Startup command registrations reported by Windows.",
+      "category": "Processes and Services",
+      "keywords": [
+        "startup"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "processes.startup",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "processes.events",
+      "name": "Event Viewer",
+      "description": "Open Windows event administration; logs can be cleared from this tool.",
+      "category": "Processes and Services",
+      "keywords": [
+        "events"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Mmc",
+      "targetId": "processes.events",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:mmc.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Opens an administrative interface whose controls can modify Windows. Its subsequent actions are outside the toolkit.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.sfc-verify",
+      "name": "SFC verification",
+      "description": "Verify protected system files without repairing them.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "sfc-verify"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.sfc-verify",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:sfc.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Heavy",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.sfc",
+      "name": "SFC repair",
+      "description": "Scan and repair protected system files.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "sfc"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.sfc",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:sfc.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Scan and repair protected system files.",
+      "cost": "Heavy",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.dism-check",
+      "name": "DISM quick health check",
+      "description": "Read recorded component-store health; servicing can update metadata.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "dism-check"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.dism-check",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:dism.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Read recorded component-store health; servicing can update metadata.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.dism-scan",
+      "name": "DISM health scan",
+      "description": "Scan the component store; servicing can update metadata.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "dism-scan"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.dism-scan",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:dism.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Scan the component store; servicing can update metadata.",
+      "cost": "Heavy",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.dism-restore",
+      "name": "DISM repair (local sources)",
+      "description": "Repair the component store with Windows Update fallback disabled.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "dism-restore"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.dism-restore",
+      "parameters": [
+        {
+          "name": "source",
+          "type": "LocalDirectory",
+          "label": "Mounted Windows repair directory (optional)",
+          "required": false,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:dism.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Repair the component store with Windows Update fallback disabled.",
+      "cost": "Heavy",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.chkdsk",
+      "name": "Read-only filesystem check",
+      "description": "CHKDSK without repair switches. Active-volume reports may be misleading.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "chkdsk"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.chkdsk",
+      "parameters": [
+        {
+          "name": "drive",
+          "type": "DriveLetter",
+          "label": "Local drive letter",
+          "required": true,
+          "default": "C",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:chkdsk.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Heavy",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.winsock",
+      "name": "Reset Winsock",
+      "description": "Reset socket providers; networking software may be affected and a restart may be needed.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "winsock"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.winsock",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:netsh.exe"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Removes custom Winsock providers. Connectivity and networking software may be affected. A restart may be needed; none will be scheduled.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "repair.temp",
+      "name": "Preview temporary-file cleanup",
+      "description": "Preview at most 200 regular files older than seven days in your local Temp directory.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "temp"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "repair.temp",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Permanently deletes only the previewed eligible files. There is no undo.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "security.defender",
+      "name": "Windows Defender status",
+      "description": "Query Defender status when its Windows module is available.",
+      "category": "Security and Administration",
+      "keywords": [
+        "defender"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "security.defender",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-MpComputerStatus"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "security.firewall",
+      "name": "Firewall status",
+      "description": "Query Windows firewall profiles without changing them.",
+      "category": "Security and Administration",
+      "keywords": [
+        "firewall"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Cmdlet",
+      "targetId": "security.firewall",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-NetFirewallProfile"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "security.users",
+      "name": "Local user accounts",
+      "description": "Query local accounts without the architecture-specific LocalAccounts module.",
+      "category": "Security and Administration",
+      "keywords": [
+        "users"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "security.users",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "No intentional configuration change. Windows may write operational logs.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "security.devices",
+      "name": "Device Manager",
+      "description": "Open device administration; changing devices can disrupt the system.",
+      "category": "Security and Administration",
+      "keywords": [
+        "devices"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Mmc",
+      "targetId": "security.devices",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:mmc.exe"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Opens an administrative interface whose controls can modify Windows. Its subsequent actions are outside the toolkit.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "security.computer-management",
+      "name": "Computer Management",
+      "description": "Open Windows administration tools with broad modification capabilities.",
+      "category": "Security and Administration",
+      "keywords": [
+        "computer-management"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Mmc",
+      "targetId": "security.computer-management",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:mmc.exe"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Opens an administrative interface whose controls can modify Windows. Its subsequent actions are outside the toolkit.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "security.settings",
+      "name": "Windows security settings",
+      "description": "Open the Windows Security settings page.",
+      "category": "Security and Administration",
+      "keywords": [
+        "settings"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Settings",
+      "targetId": "security.settings",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Opens an administrative interface whose controls can modify Windows. Its subsequent actions are outside the toolkit.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "system.full-specs",
+      "name": "Full specifications",
+      "description": "Combined specification report. Unavailable sections do not discard successful sections.",
+      "category": "System Information",
+      "keywords": [
+        "system",
+        "full",
+        "specs"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.full-specs",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Heavy",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.events",
+      "name": "Recent critical and error events",
+      "description": "Up to 50 critical/error events per System and Application log.",
+      "category": "Troubleshooting",
+      "keywords": [
+        "troubleshooting",
+        "events"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.events",
+      "parameters": [
+        {
+          "name": "hours",
+          "type": "Integer",
+          "label": "Look back hours",
+          "required": true,
+          "default": 24,
+          "minimum": 1,
+          "maximum": 168,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.devices",
+      "name": "Problem devices",
+      "description": "Devices reporting configuration or driver errors.",
+      "category": "Troubleshooting",
+      "keywords": [
+        "troubleshooting",
+        "devices"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.devices",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.battery",
+      "name": "Battery health indicators",
+      "description": "Firmware-reported design and full-charge capacities where available.",
+      "category": "Troubleshooting",
+      "keywords": [
+        "troubleshooting",
+        "battery"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.battery",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.updates",
+      "name": "Windows Update diagnostics",
+      "description": "Local update services, restart indicators, policy and toolbox suspension state. No update scan is started.",
+      "category": "Troubleshooting",
+      "keywords": [
+        "troubleshooting",
+        "updates"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.updates",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.connectivity",
+      "name": "Connectivity diagnostic",
+      "description": "Inspect the IPv4 gateway, DNS resolution and TCP connectivity to your explicit target.",
+      "category": "Troubleshooting",
+      "keywords": [
+        "troubleshooting",
+        "connectivity"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.connectivity",
+      "parameters": [
+        {
+          "name": "host",
+          "type": "Host",
+          "label": "Target hostname or IP",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": []
+        },
+        {
+          "name": "port",
+          "type": "Integer",
+          "label": "Target TCP port",
+          "required": true,
+          "default": 443,
+          "minimum": 1,
+          "maximum": 65535,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Variable",
+      "networkAccess": "UserTarget",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "security.firewall-control",
+      "name": "Firewall enable / disable",
+      "description": "Enable protection or disable selected profiles in timed/manual mode. Effective policy is verified.",
+      "category": "Security and Administration",
+      "keywords": [
+        "security",
+        "firewall",
+        "control"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "security.firewall-control",
+      "parameters": [
+        {
+          "name": "profile",
+          "type": "Choice",
+          "label": "Firewall profiles",
+          "required": true,
+          "default": "Private",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Private",
+            "Public",
+            "Domain",
+            "All"
+          ]
+        },
+        {
+          "name": "action",
+          "type": "Choice",
+          "label": "Action",
+          "required": true,
+          "default": "Disable",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Disable",
+            "Enable"
+          ]
+        },
+        {
+          "name": "mode",
+          "type": "Choice",
+          "label": "Restore mode",
+          "required": true,
+          "default": "Timed",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Timed",
+            "Manual"
+          ]
+        },
+        {
+          "name": "minutes",
+          "type": "Integer",
+          "label": "Timed restoration in minutes",
+          "required": true,
+          "default": 30,
+          "minimum": 1,
+          "maximum": 1440,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Register-ScheduledTask"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Enable protection or disable selected profiles in timed/manual mode. Effective policy is verified. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "security.firewall-restore",
+      "name": "Restore toolbox firewall changes",
+      "description": "Restore original profile settings from toolbox snapshots. Conflicting external changes are not overwritten.",
+      "category": "Security and Administration",
+      "keywords": [
+        "security",
+        "firewall",
+        "restore"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "security.firewall-restore",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Restore original profile settings from toolbox snapshots. Conflicting external changes are not overwritten. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "security.defender-control",
+      "name": "Defender real-time protection",
+      "description": "Enable or disable real-time protection in timed/manual mode. Tamper Protection is never bypassed.",
+      "category": "Security and Administration",
+      "keywords": [
+        "security",
+        "defender",
+        "control"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "security.defender-control",
+      "parameters": [
+        {
+          "name": "action",
+          "type": "Choice",
+          "label": "Action",
+          "required": true,
+          "default": "Disable",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Disable",
+            "Enable"
+          ]
+        },
+        {
+          "name": "mode",
+          "type": "Choice",
+          "label": "Restore mode",
+          "required": true,
+          "default": "Timed",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Timed",
+            "Manual"
+          ]
+        },
+        {
+          "name": "minutes",
+          "type": "Integer",
+          "label": "Timed restoration in minutes",
+          "required": true,
+          "default": 30,
+          "minimum": 1,
+          "maximum": 1440,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Register-ScheduledTask"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Enable or disable real-time protection in timed/manual mode. Tamper Protection is never bypassed. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "security.defender-restore",
+      "name": "Restore toolbox Defender change",
+      "description": "Restore the original real-time protection state from the toolbox snapshot.",
+      "category": "Security and Administration",
+      "keywords": [
+        "security",
+        "defender",
+        "restore"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "security.defender-restore",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Restore the original real-time protection state from the toolbox snapshot. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "updates.suspend",
+      "name": "Suspend automatic updates (1-36 months)",
+      "description": "Apply local automatic-update policy on supported unmanaged editions. Manual updates remain available. A dated restoration task is required.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "updates",
+        "suspend"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "updates.suspend",
+      "parameters": [
+        {
+          "name": "months",
+          "type": "Integer",
+          "label": "Calendar months to suspend automatic updates",
+          "required": true,
+          "default": 1,
+          "minimum": 1,
+          "maximum": 36,
+          "allowedValues": []
+        }
+      ],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Register-ScheduledTask"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Apply local automatic-update policy on supported unmanaged editions. Manual updates remain available. A dated restoration task is required. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "updates.resume",
+      "name": "Resume previous automatic-update policy",
+      "description": "Restore the exact original NoAutoUpdate value or remove the toolbox-created value.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "updates",
+        "resume"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "updates.resume",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Restore the exact original NoAutoUpdate value or remove the toolbox-created value. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "power.countdown",
+      "name": "Schedule shutdown / restart",
+      "description": "Schedule a local power action from one second through seven days. It continues after closing the toolbox. Force can lose unsaved data.",
+      "category": "Power and Scheduling",
+      "keywords": [
+        "power",
+        "countdown"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "power.countdown",
+      "parameters": [
+        {
+          "name": "action",
+          "type": "Choice",
+          "label": "Power action",
+          "required": true,
+          "default": "Shutdown",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Shutdown",
+            "Restart"
+          ]
+        },
+        {
+          "name": "duration",
+          "type": "Integer",
+          "label": "Duration",
+          "required": true,
+          "default": 5,
+          "minimum": 1,
+          "maximum": 604800,
+          "allowedValues": []
+        },
+        {
+          "name": "unit",
+          "type": "Choice",
+          "label": "Duration unit",
+          "required": true,
+          "default": "Minutes",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Seconds",
+            "Minutes",
+            "Hours",
+            "Days"
+          ]
+        },
+        {
+          "name": "closure",
+          "type": "Choice",
+          "label": "Application closure",
+          "required": true,
+          "default": "Normal",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Normal",
+            "Force"
+          ]
+        }
+      ],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Register-ScheduledTask"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Schedule a local power action from one second through seven days. It continues after closing the toolbox. Force can lose unsaved data. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "power.cancel",
+      "name": "Cancel toolbox power countdown",
+      "description": "Cancel a pending toolbox-owned power action before Windows is asked to shut down. Other applications' shutdowns are untouched.",
+      "category": "Power and Scheduling",
+      "keywords": [
+        "power",
+        "cancel"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "power.cancel",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Cancel a pending toolbox-owned power action before Windows is asked to shut down. Other applications' shutdowns are untouched. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "power.status",
+      "name": "Power countdown status",
+      "description": "Display recorded toolbox power deadlines and state.",
+      "category": "Power and Scheduling",
+      "keywords": [
+        "power",
+        "status"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "power.status",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "power.force-restart",
+      "name": "Force restart now",
+      "description": "Immediately request a forced restart. Applications close without saving; unsaved work can be lost.",
+      "category": "Power and Scheduling",
+      "keywords": [
+        "power",
+        "force",
+        "restart"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "power.force-restart",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:shutdown.exe"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Immediately request a forced restart. Applications close without saving; unsaved work can be lost. Changes run only after confirmation; scheduled features create protected recovery files and Windows tasks.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Unavailable"
+    },
+    {
+      "id": "maintenance.managed-changes",
+      "name": "Toolbox changes and restoration status",
+      "description": "Inspect recorded changes, deadlines, manual modes, restoration failures and conflicts.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "maintenance",
+        "managed",
+        "changes"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "maintenance.managed-changes",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local information without applying repairs.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    }
+  ]
+}

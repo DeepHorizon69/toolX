@@ -1,0 +1,5 @@
+.tools/
+.build/
+.restore-points/
+TestResults.xml
+*.user
