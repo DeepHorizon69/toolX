@@ -2,7 +2,10 @@ BeforeAll { . (Join-Path (Split-Path $PSScriptRoot -Parent) 'TestSupport.ps1') }
 
 Describe 'Adaptive terminal presentation' {
     BeforeEach {
-        $script:ToolkitVersion = '0.2.1'; $script:ToolkitBasic = $false
+        $script:ToolkitProductName = 'TOOLX Windows Edition'
+        $script:ToolkitChannel = 'Alpha'
+        $script:ToolkitSignature = 'by ALSA'
+        $script:ToolkitVersion = '0.2.2'; $script:ToolkitBasic = $false
         $script:ToolkitConfirmActions = $true; $script:ToolkitFrameCache = $null
         $script:ToolkitTerminalState = $null
         $script:items = @(1..30 | ForEach-Object { [pscustomobject]@{ Label = "Command $_"; Value = $_ } })
@@ -67,6 +70,7 @@ Describe 'Adaptive terminal presentation' {
         $script:ToolkitTerminalState = [pscustomobject]@{Administrator=$true}
         $script:ToolkitConfirmActions = $false
         $rows = @(Get-ToolkitHeader 'Test' 59)
+        $rows[0].Segments[0].Text | Should -Match 'TOOLX Windows Edition Alpha 0\.2\.2 \| by ALSA'
         $rows[1].Segments[0].Text | Should -Match 'ADMINISTRATOR: children inherit.*ACTION CONFIRMATIONS OFF'
         $rows[1].Segments[0].Role | Should -Be 'Warning'
     }
@@ -82,7 +86,7 @@ Describe 'Adaptive terminal presentation' {
         Should -Invoke Update-ToolkitCustomCatalog -Times 0
     }
 
-    It 'keeps complete metadata and actions reachable for all 66 built-ins' {
+    It 'keeps complete metadata and actions reachable for all 91 built-ins' {
         foreach ($command in $script:ToolkitRegistry.commands) {
             $description = @(Get-ToolkitCommandContext $command)
             $frame = New-ToolkitMenuFrame $command.name @([pscustomobject]@{Label='Run';Value='Run'}, [pscustomobject]@{Label='Back';Value='Back'}) $description 0 ([pscustomobject]@{Width=120;Height=30}) $command

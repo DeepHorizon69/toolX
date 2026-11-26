@@ -99,3 +99,35 @@ Describe 'Restricted cleanup' {
         Should -Invoke Remove-Item -Times 1 -ParameterFilter { $LiteralPath -eq $path }
     }
 }
+
+Describe 'Extended support and repair contracts' {
+    BeforeEach { Mock Get-ToolkitWindowsExecutable { param($Name) "C:\Windows\System32\$Name" } }
+    It 'allows powercfg.exe and builds repair.tcpip-reset native spec' {
+        Get-ToolkitWindowsExecutable 'powercfg.exe' | Should -Match 'powercfg\.exe$'
+        $spec = Get-ToolkitNativeSpec 'repair.tcpip-reset' @{}
+        $spec.FileName | Should -Match 'netsh\.exe$'
+        ($spec.Arguments -join ' ') | Should -Be 'int ip reset'
+    }
+    It 'prevents modifying and privileged new targets from running in background' {
+        foreach ($id in @('network.dhcp-renew','hardware.tpm','repair.restart-spooler','repair.icon-cache','repair.tcpip-reset')) {
+            { Start-ToolkitExecution (Get-TestCommand $id) @{} } | Should -Throw '*read-only*'
+        }
+    }
+    It 'restarts spooler safely using mocked service and file calls' {
+        $spoolDir = Join-Path $TestDrive 'spool\PRINTERS'
+        New-Item -ItemType Directory -Path $spoolDir -Force | Out-Null
+        [IO.File]::WriteAllText((Join-Path $spoolDir 'stuck.spl'), 'data')
+        Mock Test-ToolkitLocalPath { $spoolDir }
+        Mock Test-ToolkitNoReparsePoint {}
+        Mock Stop-Service {}
+        Mock Start-Service {}
+        Mock Get-Service { [pscustomobject]@{ Status = 'Running' } }
+        Mock Remove-Item {}
+        $summary = Invoke-ToolkitRepairAction 'repair.restart-spooler'
+        $summary.RemovedFiles | Should -Be 1
+        $summary.FinalStatus | Should -Be 'Running'
+        Should -Invoke Stop-Service -Times 1 -Exactly
+        Should -Invoke Start-Service -Times 1 -Exactly
+        Should -Invoke Remove-Item -Times 1 -Exactly
+    }
+}

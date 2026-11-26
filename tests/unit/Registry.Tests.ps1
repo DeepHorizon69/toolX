@@ -2,9 +2,9 @@
 
 Describe 'Built-in catalog safety' {
     BeforeEach { $registry = [IO.File]::ReadAllText((Join-Path $script:RepositoryRoot 'src/config/commands.json')) | ConvertFrom-Json }
-    It 'validates all 66 reviewed operations' {
+    It 'validates all 91 reviewed operations' {
         { Test-ToolkitRegistry $registry } | Should -Not -Throw
-        $registry.commands.Count | Should -Be 66
+        $registry.commands.Count | Should -Be 91
     }
     It 'rejects duplicate identifiers' {
         $registry.commands[1].id = $registry.commands[0].id
@@ -39,7 +39,7 @@ Describe 'Built-in catalog safety' {
     }
     It 'finds names, categories and keywords without case sensitivity' {
         @(Find-ToolkitCommand $registry.commands 'ICMP').Count | Should -BeGreaterThan 0
-        @(Find-ToolkitCommand $registry.commands 'hardware diagnostics').Count | Should -Be 7
+        @(Find-ToolkitCommand $registry.commands 'hardware diagnostics').Count | Should -Be 10
     }
 }
 

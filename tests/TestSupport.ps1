@@ -5,6 +5,10 @@ foreach ($source in $manifest.files) {
     if (Test-Path -LiteralPath $path) { . $path }
 }
 $script:ToolkitRegistry = [IO.File]::ReadAllText((Join-Path $script:RepositoryRoot 'src/config/commands.json')) | ConvertFrom-Json
+$script:ToolkitProductName = $manifest.productName
+$script:ToolkitChannel = $manifest.channel
+$script:ToolkitSignature = $manifest.signature
+$script:ToolkitVersion = $manifest.version
 $script:ToolkitRoot = $script:RepositoryRoot
 $script:ToolkitEntryPath = Join-Path $script:RepositoryRoot 'src/Main.ps1'
 $script:ToolkitCustomCommands = @()

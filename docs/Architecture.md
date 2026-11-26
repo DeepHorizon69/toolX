@@ -2,13 +2,17 @@
 
 The core is a modular monolith bundled into one script. `Build.Manifest.json` determines source order. Only `Main.ps1` owns entrypoint parameters and startup. Runtime metadata is embedded as inert Base64-encoded JSON, then validated without invoking code strings.
 
-Version 0.2 adds 17 built-ins (66 total) and dedicated Troubleshooting, Controls and ManagedChanges components. The registry and target policy remain the sole entrypoint for interactive commands. Read-only diagnostics use the existing worker; elevated changes stay behind typed confirmation. The scheduled helper exposes only Probe and Execute modes for validated protected job records, not arbitrary commands.
+Alpha 0.2.2 contains 91 built-ins: 64 ReadOnly, 13 SystemModification and 14 HighRisk commands. Troubleshooting, Controls and ManagedChanges handle diagnostics, explicit system changes and recovery. The registry and target policy remain the sole entrypoint for interactive commands. Read-only diagnostics use the existing worker; elevated changes use a separate operation console and the session's confirmation setting. The scheduled helper exposes only Probe and Execute modes for validated protected job records, not arbitrary commands.
 
 The built-in registry is checked against explicit target policies. Category modules dispatch only known operations. New metadata can reuse trusted targets; a genuinely new capability requires a handler/policy entry. Navigation has no category-specific dispatch logic.
 
 Version 0.2.1 adds a session-only Action confirmations preference, initialized ON by the main entrypoint. An explicit OFF acknowledgement in Settings disables toolkit yes/typed-ID prompts for modifying, high-risk and custom-script actions. Registry risk/confirmation metadata stays unchanged. The parent passes a dedicated switch only to the selected operation worker; worker parameters remain independently validated. This preference does not alter Windows UAC, permission checks, recovery scheduling or script-owned input. Cleanup still lists the bounded preview and performs all deletion checks; OFF mode skips its paging/typed prompts and supplies the known operation ID internally. Final output acknowledgement remains. No preference file is written.
 
+The current GUI uses two button confirmations to disable action confirmations; the terminal retains the typed OFF acknowledgement. Both settings apply only to the current session.
+
 Custom discovery is separate: local `Scripts` root plus immediate non-support subdirectories, at most 500 entries, no reparse points, no recursive helper discovery. Metadata is UTF-8, at most 64 KiB, and accepts only version, name, description, administrator request and enabled state. No runtime plugin modules, command strings, interpreter overrides or path redirects are supported. Names do not replace IDs; custom IDs occupy the `custom/` namespace.
+
+ScriptImporter copies local scripts or bounded ZIP packs and downloads HTTPS scripts or manifest catalogs into the portable Scripts root. Direct URL imports accept an optional hash; manifest entries require SHA-256. Imports do not execute the scripts. Alpha 0.2.2 has confirmed overwrite, oversized-metadata and relative-path defects documented in [script publishing](Script-Publishing.md#known-importer-issues); the current importer does not provide transactional replacement.
 
 The executor runs ordinary read-only diagnostics in one on-demand runspace. Native output uses concurrent asynchronous character reads into a bounded queue. Rendering retains a bounded tail. Modification, administrative interfaces, elevated diagnostics and custom scripts use a dedicated console worker. The worker revalidates the entry and obtains confirmation before dispatch. The main interface does not claim to capture the child's detailed operation result.
 
@@ -18,11 +22,21 @@ Trust remains with the selected user script. Path containment and reparse reject
 
 The core deliberately creates no reports, logs, network checks, services or scheduled work at startup. Optional Windows features are checked on demand. Permission denial and missing capabilities are distinct. CIM restrictions can exist even for ordinary information queries.
 
-SFC verification and plain CHKDSK are read-only in intention, though Windows may write logs. DISM checks are conservatively treated as modifications to servicing metadata. RestoreHealth always uses `/LimitAccess`; a compatible local mounted Windows source can be supplied. No boot repair scheduling, forced dismount, repair switches for CHKDSK, automatic reboot, or security disabling is provided.
+SFC verification and plain CHKDSK are read-only in intention, though Windows may write logs. DISM checks are conservatively treated as modifications to servicing metadata. RestoreHealth always uses `/LimitAccess`; a compatible local mounted Windows source can be supplied. These repair commands do not schedule boot repair, force dismounts or reboot automatically. Separate explicitly selected controls can disable firewall/Defender protection or request power actions with their documented confirmations and recovery behavior.
 
 Cleanup targets only immediate regular files older than seven days under the current user's canonical local Temp directory. Every candidate in a maximum-200-file preview is displayed; confirmation is followed by containment, reparse, age, length and timestamp revalidation. There is no recursion, wildcard deletion or user-selected cleanup root.
 
-## Terminal presentation
+## Graphical presentation
+
+The optional -Gui entrypoint loads WPF on demand. Gui.ps1 builds a command tree, literal search, metadata-driven forms and result views from the existing catalog. GUI parameter conversion retains the conditional security-control rules. Only ordinary unelevated read-only commands use the shared background engine; custom scripts, administrative queries and modifying/management actions use the existing operation console and UAC path.
+
+The GUI dispatcher polls every 100 ms only while a worker or external operation console is active. It drains the final output batch before disposing a completed worker and retains bounded text/structured results. Closing during a diagnostic waits for asynchronous cancellation and cleanup; external console processes are detached, not killed. Action confirmations remain session-only and start ON.
+
+Toolkit.exe and Toolkit.CLI.exe are AnyCPU .NET Framework hosts compiled from ToolkitHost.cs. Each embeds the GZip-compressed standalone script and its expected SHA-256, extracts and verifies it in a unique temporary session directory, then starts native Windows PowerShell with -STA. The host passes its executable directory as -AppRoot for portable Scripts discovery. GUI mode redirects and drains output, retaining approximately 8 KiB of error text for a startup failure dialog; CLI mode uses the console. Cleanup retries temporary-directory removal on exit. The hosts accept an explicit argument allowlist, keep the existing execution policy and do not request automatic elevation. Build still stages the older adjacent-script GUI/CMD launchers for regression fixtures, but distributes only the compact EXEs and their checksum files.
+
+## Terminal presentation details
+
+Specification reports carry structured rows through the worker result, bounded to 4,096 records with explicit truncation beyond that limit. DeviceIndex associates fields with each returned device. The specification renderer groups these records into device blocks and balances them across width-dependent columns of at least 40 characters (or a single narrower column), wrapping values without ellipsis. Completed-result navigation regenerates these columns when the width changes. Basic and elevated operation consoles use the same formatter at their available width. Other diagnostics continue using the existing bounded text queue and retained-output path.
 
 The UI remains in Terminal, Navigation and Renderer. Terminal caches session privilege/color capabilities, captures appearance, and owns blocking key input and restoration. Navigation retains the existing category/search/details/parameter/execution transitions. Renderer builds logical rows with semantic color segments and compares them with the last painted frame. Identical frames write nothing; changed rows include padding to erase old content. Viewport origins and size changes invalidate the cache. One retry is allowed for positioning failures before numbered-menu fallback.
 

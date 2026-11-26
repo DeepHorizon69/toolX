@@ -102,3 +102,21 @@ function ConvertTo-ToolkitSafeText {
     $text = [regex]::Replace($text, '\x1B\[[0-?]*[ -/]*[@-~]', '')
     return [regex]::Replace($text, '[\x00-\x08\x0B-\x1F\x7F]', '')
 }
+
+function Get-ToolkitIdentity {
+    $product = if ([string]::IsNullOrWhiteSpace($script:ToolkitProductName)) { 'TOOLX Windows Edition' } else { [string]$script:ToolkitProductName }
+    $channel = if ([string]::IsNullOrWhiteSpace($script:ToolkitChannel)) { 'Alpha' } else { [string]$script:ToolkitChannel }
+    $version = if ([string]::IsNullOrWhiteSpace($script:ToolkitVersion)) { '0.2.2' } else { [string]$script:ToolkitVersion }
+    $signature = if ([string]::IsNullOrWhiteSpace($script:ToolkitSignature)) { 'by ALSA' } else { [string]$script:ToolkitSignature }
+    $versionLabel = "$channel $version"
+    return [pscustomobject]@{
+        ProductName = $product
+        Channel = $channel
+        Version = $version
+        VersionLabel = $versionLabel
+        Signature = $signature
+        Banner = "$product $versionLabel | $signature"
+        WindowTitle = "$product - $versionLabel ($signature)"
+        VersionOutput = "$product $versionLabel ($signature)"
+    }
+}

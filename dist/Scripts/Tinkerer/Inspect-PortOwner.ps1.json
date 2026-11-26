@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "name": "Inspect port owner process",
+  "description": "Finds TCP/UDP listeners on a chosen port, shows executable path and command line, and offers confirmed stop.",
+  "requiresAdmin": false,
+  "enabled": true
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "applicationVersion": "0.2.1",
+  "applicationVersion": "0.2.2",
   "commands": [
     {
       "id": "system.os",
@@ -1561,17 +1561,40 @@
     {
       "id": "system.full-specs",
       "name": "Full specifications",
-      "description": "Combined specification report. Unavailable sections do not discard successful sections.",
+      "description": "Choose Full, Hardware, Firmware (motherboard and BIOS), Windows, Storage or Network specifications. Unavailable sections do not discard successful sections.",
       "category": "System Information",
       "keywords": [
         "system",
         "full",
-        "specs"
+        "specs",
+        "hardware",
+        "firmware",
+        "bios",
+        "storage",
+        "network"
       ],
       "sourceKind": "BuiltIn",
       "executionType": "Function",
       "targetId": "system.full-specs",
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "scope",
+          "type": "Choice",
+          "label": "Specification scope (Firmware: motherboard and BIOS)",
+          "required": false,
+          "default": "Full",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "Full",
+            "Hardware",
+            "Firmware",
+            "Windows",
+            "Storage",
+            "Network"
+          ]
+        }
+      ],
       "requiresAdmin": false,
       "compatibility": {
         "minimumBuild": 10240,
@@ -2251,6 +2274,854 @@
       "cost": "Variable",
       "networkAccess": "None",
       "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.activation",
+      "name": "Windows activation and license",
+      "description": "Windows Software Licensing status, partial product key and remaining grace minutes.",
+      "category": "System Information",
+      "keywords": [
+        "activation",
+        "license",
+        "slmgr",
+        "key"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.activation",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local licensing metadata without modifying activation state.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.drivers",
+      "name": "Signed and third-party drivers",
+      "description": "List installed Plug and Play drivers (third-party by default, or all signed drivers).",
+      "category": "System Information",
+      "keywords": [
+        "drivers",
+        "inf",
+        "signed",
+        "bsod"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.drivers",
+      "parameters": [
+        {
+          "name": "scope",
+          "type": "Choice",
+          "label": "Driver scope",
+          "required": false,
+          "default": "ThirdParty",
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": [
+            "ThirdParty",
+            "All"
+          ]
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries signed driver metadata without modifying drivers.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.installed-apps",
+      "name": "Installed applications",
+      "description": "Inventory installed software from 64-bit, 32-bit and user Uninstall registry keys.",
+      "category": "System Information",
+      "keywords": [
+        "apps",
+        "software",
+        "programs",
+        "uninstall"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.installed-apps",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Reads registry uninstall keys without triggering MSI package repair.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "system.power-plans",
+      "name": "Power plans and sleep states",
+      "description": "Active power scheme, available power plans and supported sleep states (S0/S3/Hibernate).",
+      "category": "System Information",
+      "keywords": [
+        "powercfg",
+        "power",
+        "sleep",
+        "standby"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "system.power-plans",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:powercfg.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries power configuration without changing the active scheme.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.listening-ports",
+      "name": "Listening ports and processes",
+      "description": "Active TCP listeners and UDP endpoints mapped to their owning process name and PID.",
+      "category": "Networking",
+      "keywords": [
+        "ports",
+        "listen",
+        "tcp",
+        "udp",
+        "pid"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "network.listening-ports",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-NetTCPConnection"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries active socket bindings without modifying firewall or processes.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.wifi",
+      "name": "Wi-Fi radio and saved profiles",
+      "description": "Wireless adapter signal, radio band and saved WLAN profile names (passwords omitted).",
+      "category": "Networking",
+      "keywords": [
+        "wifi",
+        "wlan",
+        "wireless",
+        "ssid"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "network.wifi",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:netsh.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries WLAN interface and profile names without revealing security keys.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.hosts",
+      "name": "Windows hosts file",
+      "description": "Inspect active non-comment hostname overrides in System32\\drivers\\etc\\hosts.",
+      "category": "Networking",
+      "keywords": [
+        "hosts",
+        "dns",
+        "override",
+        "etc"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "network.hosts",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Reads the local hosts file without editing entries.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.proxy",
+      "name": "System and WinHTTP proxy",
+      "description": "Current user Internet Settings proxy, PAC URL and system WinHTTP proxy state.",
+      "category": "Networking",
+      "keywords": [
+        "proxy",
+        "winhttp",
+        "pac"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "network.proxy",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:netsh.exe"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries proxy settings without changing network configuration.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "network.dhcp-renew",
+      "name": "Release and renew DHCP lease",
+      "description": "Run ipconfig /release followed by ipconfig /renew across active adapters.",
+      "category": "Networking",
+      "keywords": [
+        "dhcp",
+        "ipconfig",
+        "release",
+        "renew"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "network.dhcp-renew",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:ipconfig.exe"
+        ]
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Temporarily interrupts network connections while renewing DHCP leases.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.usb",
+      "name": "Connected USB devices",
+      "description": "Enumerates Plug and Play USB devices, controllers, manufacturers and status.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "usb",
+        "pnp",
+        "devices"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.usb",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries connected USB device metadata without changing drivers.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.monitors",
+      "name": "Connected displays and EDID",
+      "description": "Monitor EDID manufacturer, model, serial, year and active display resolution.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "monitor",
+        "display",
+        "edid",
+        "screen"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.monitors",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries display and EDID metadata without changing display settings.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "hardware.tpm",
+      "name": "TPM and Secure Boot status",
+      "description": "Check UEFI Secure Boot state and Trusted Platform Module readiness.",
+      "category": "Hardware Diagnostics",
+      "keywords": [
+        "tpm",
+        "secureboot",
+        "uefi",
+        "bitlocker"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "hardware.tpm",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries TPM and UEFI Secure Boot status without changing firmware or keys.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "storage.large-files",
+      "name": "Largest files in directory",
+      "description": "Find the largest files in a local folder without following reparse points (50,000 file scan cap).",
+      "category": "Storage Management",
+      "keywords": [
+        "disk",
+        "space",
+        "large",
+        "files",
+        "cleanup"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "storage.large-files",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "LocalDirectory",
+          "label": "Local directory path",
+          "required": true,
+          "default": null,
+          "minimum": null,
+          "maximum": null,
+          "allowedValues": null
+        },
+        {
+          "name": "top",
+          "type": "Integer",
+          "label": "Number of largest files",
+          "required": false,
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "allowedValues": null
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Reads directory metadata only; skips reparse points and inaccessible folders.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "storage.shares",
+      "name": "Network shares and mapped drives",
+      "description": "Local SMB shares and current user mapped network drives.",
+      "category": "Storage Management",
+      "keywords": [
+        "smb",
+        "shares",
+        "mapped",
+        "drives"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "storage.shares",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries share and mapped drive metadata without modifying permissions.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "processes.top-resources",
+      "name": "Top CPU and memory processes",
+      "description": "Top 15 processes by memory working set and top 15 by cumulative CPU time.",
+      "category": "Processes and Services",
+      "keywords": [
+        "cpu",
+        "ram",
+        "memory",
+        "top",
+        "performance"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "processes.top-resources",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Snapshots running process resource usage without stopping processes.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "processes.scheduled-tasks",
+      "name": "Non-Microsoft scheduled tasks",
+      "description": "Scheduled tasks outside \\Microsoft\\Windows\\* along with state and configured action.",
+      "category": "Processes and Services",
+      "keywords": [
+        "tasks",
+        "scheduler",
+        "autorun",
+        "persistence"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "processes.scheduled-tasks",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "cmdlet:Get-ScheduledTask"
+        ]
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries Task Scheduler metadata without enabling, disabling or running tasks.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "processes.stopped-auto-services",
+      "name": "Stopped automatic services",
+      "description": "Windows services configured for Automatic startup that are currently not running.",
+      "category": "Processes and Services",
+      "keywords": [
+        "services",
+        "stopped",
+        "automatic",
+        "failed"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "processes.stopped-auto-services",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries service status without starting or modifying services.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.bsod",
+      "name": "BSOD crash and minidump history",
+      "description": "Check Windows Minidump, MEMORY.DMP and recent BugCheck / Kernel-Power events (30 days).",
+      "category": "Troubleshooting",
+      "keywords": [
+        "bsod",
+        "crash",
+        "minidump",
+        "bugcheck"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.bsod",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Inspects dump file metadata and System crash events without altering dumps.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.boot-history",
+      "name": "Boot, shutdown and wake history",
+      "description": "System event log timeline for startups, unexpected shutdowns and sleep/wake transitions.",
+      "category": "Troubleshooting",
+      "keywords": [
+        "boot",
+        "shutdown",
+        "wake",
+        "sleep",
+        "reboot"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.boot-history",
+      "parameters": [
+        {
+          "name": "days",
+          "type": "Integer",
+          "label": "Lookback days",
+          "required": false,
+          "default": 7,
+          "minimum": 1,
+          "maximum": 30,
+          "allowedValues": null
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Reads bounded System log power/boot events without changing settings.",
+      "cost": "Variable",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "troubleshooting.printers",
+      "name": "Print Spooler and print queue",
+      "description": "Spooler service status, installed printers and any queued or stuck print jobs.",
+      "category": "Troubleshooting",
+      "keywords": [
+        "printer",
+        "spooler",
+        "queue",
+        "print"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "troubleshooting.printers",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries printer and spooler state without clearing jobs or restarting services.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "security.local-admins",
+      "name": "Local Administrators members",
+      "description": "Members of the local Administrators group resolved via well-known SID S-1-5-32-544.",
+      "category": "Security and Administration",
+      "keywords": [
+        "admins",
+        "administrators",
+        "group",
+        "members"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "security.local-admins",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Queries local Administrators membership without modifying accounts or groups.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "security.certificates",
+      "name": "Expiring certificates",
+      "description": "Personal certificates in LocalMachine\\My and CurrentUser\\My that are expired or expiring soon.",
+      "category": "Security and Administration",
+      "keywords": [
+        "certificates",
+        "cert",
+        "tls",
+        "expiry"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "security.certificates",
+      "parameters": [
+        {
+          "name": "days",
+          "type": "Integer",
+          "label": "Expiration window in days",
+          "required": false,
+          "default": 90,
+          "minimum": 1,
+          "maximum": 365,
+          "allowedValues": null
+        }
+      ],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "ReadOnly",
+      "confirmation": "None",
+      "consequences": "Reads certificate expiration metadata without exporting private keys or modifying stores.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "repair.restart-spooler",
+      "name": "Restart Print Spooler and clear queue",
+      "description": "Stop Spooler, delete stuck files inside System32\\spool\\PRINTERS, and restart Spooler.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "spooler",
+        "printer",
+        "queue",
+        "clear"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "repair.restart-spooler",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Deletes all queued spool files on this machine and restarts the Print Spooler service.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "repair.icon-cache",
+      "name": "Rebuild icon and thumbnail cache",
+      "description": "Stop Explorer, delete current user iconcache_*.db and thumbcache_*.db files, and restart Explorer.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "icon",
+        "thumbnail",
+        "cache",
+        "explorer"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Function",
+      "targetId": "repair.icon-cache",
+      "parameters": [],
+      "requiresAdmin": false,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": []
+      },
+      "risk": "SystemModification",
+      "confirmation": "Confirm",
+      "consequences": "Closes all File Explorer windows briefly while clearing cached icon and thumbnail databases.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "Cooperative"
+    },
+    {
+      "id": "repair.tcpip-reset",
+      "name": "Reset TCP/IP stack",
+      "description": "Run netsh int ip reset to restore default IPv4/IPv6 stack configuration.",
+      "category": "Windows Repair and Maintenance",
+      "keywords": [
+        "tcpip",
+        "netsh",
+        "network",
+        "reset"
+      ],
+      "sourceKind": "BuiltIn",
+      "executionType": "Native",
+      "targetId": "repair.tcpip-reset",
+      "parameters": [],
+      "requiresAdmin": true,
+      "compatibility": {
+        "minimumBuild": 10240,
+        "architectures": [
+          "x86",
+          "x64"
+        ],
+        "capabilities": [
+          "exe:netsh.exe"
+        ]
+      },
+      "risk": "HighRisk",
+      "confirmation": "TypeCommandId",
+      "consequences": "Resets TCP/IP registry configuration and may remove static IP settings. A restart is typically required.",
+      "cost": "Quick",
+      "networkAccess": "None",
+      "cancellation": "TerminateOwnedProcess"
     }
   ]
 }

@@ -79,6 +79,7 @@ function Show-ToolkitDiagnostic {
                 $height = 15; $width = 79
                 if ($null -ne $size) { $height = [Math]::Max(1, $size.Height - 8); $width = [Math]::Max(1, $size.Width - 1) }
                 $tail = @($lines.ToArray() | Select-Object -Last $height | ForEach-Object { Format-ToolkitText $_ $width -Display } | Select-Object -Last $height)
+                if ($Command.targetId -eq 'system.full-specs' -and -not $tail.Count) { $tail = @('Collecting selected specification data...') }
                 $instruction = 'C: cancel | Waiting for output'
                 if ($Command.cancellation -eq 'Unavailable') { $instruction = 'Cancellation unavailable; wait for completion.' }
                 Show-ToolkitFrame -Frame (New-ToolkitTextFrame $Command.name $tail -Status 'Running' -Footer @($instruction) -Size $size)
@@ -105,27 +106,49 @@ function Show-ToolkitDiagnostic {
             }
         }
         $result = Complete-ToolkitExecution $execution
+        $isSpecification = $Command.targetId -eq 'system.full-specs'
+        $specificationBlocks = @()
+        if ($isSpecification) { $specificationBlocks = @(Get-ToolkitSpecificationBlock $result.Specifications) }
         $summary = "$($result.Status) | $([Math]::Round($result.Elapsed.TotalSeconds, 2)) seconds"
         if ($truncated -or $result.Truncated) { $summary += ' | Output truncated' }
-        if ($script:ToolkitBasic) { Wait-ToolkitAcknowledgement $summary }
+        if ($script:ToolkitBasic) {
+            if ($isSpecification) {
+                $outputWidth = 79; if ($null -ne $size) { $outputWidth = [Math]::Max(1, $size.Width - 1) }
+                Format-ToolkitSpecificationLayout $specificationBlocks $outputWidth | ForEach-Object { Write-Host $_ }
+            }
+            Wait-ToolkitAcknowledgement $summary
+        }
         else {
             $offset = 0; $all = $lines.ToArray(); $wrapped = @(); $wrappedWidth = 0; $pendingKey = $null; $lineStarts = @()
             while ($true) {
                 $size = Get-ToolkitTerminalSize
                 Update-ToolkitTerminalMode $size
-                if ($null -eq $size -or $script:ToolkitBasic) { $script:ToolkitBasic = $true; $all | ForEach-Object { Write-Host $_ }; Wait-ToolkitAcknowledgement $summary; break }
+                if ($null -eq $size -or $script:ToolkitBasic) {
+                    $script:ToolkitBasic = $true
+                    $all | ForEach-Object { Write-Host $_ }
+                    if ($isSpecification) {
+                        $outputWidth = 79; if ($null -ne $size) { $outputWidth = [Math]::Max(1, $size.Width - 1) }
+                        Format-ToolkitSpecificationLayout $specificationBlocks $outputWidth | ForEach-Object { Write-Host $_ }
+                    }
+                    Wait-ToolkitAcknowledgement $summary; break
+                }
                 $height = [Math]::Max(1, $size.Height - 8)
                 if ($wrappedWidth -ne $size.Width) {
-                    $sourceLine = 0; $column = 0
-                    for ($index = 0; $index -lt $lineStarts.Count -and $lineStarts[$index] -le $offset; $index++) { $sourceLine = $index }
-                    if ($lineStarts.Count) { $column = ($offset - $lineStarts[$sourceLine]) * ($wrappedWidth - 1) }
-                    $outputRows = New-Object 'Collections.Generic.List[string]'; $starts = New-Object 'Collections.Generic.List[int]'
-                    foreach ($text in $all) {
-                        $starts.Add($outputRows.Count)
-                        foreach ($part in (Format-ToolkitText $text ($size.Width - 1) -Display)) { $outputRows.Add($part) }
+                    if ($isSpecification) {
+                        $wrapped = @($all | ForEach-Object { Format-ToolkitText $_ ($size.Width - 1) -Display }) + @(Format-ToolkitSpecificationLayout $specificationBlocks ($size.Width - 1) -Display)
                     }
-                    $wrapped = $outputRows.ToArray(); $lineStarts = $starts.ToArray()
-                    if ($lineStarts.Count) { $offset = $lineStarts[$sourceLine] + [int][Math]::Floor($column / ($size.Width - 1)) }
+                    else {
+                        $sourceLine = 0; $column = 0
+                        for ($index = 0; $index -lt $lineStarts.Count -and $lineStarts[$index] -le $offset; $index++) { $sourceLine = $index }
+                        if ($lineStarts.Count) { $column = ($offset - $lineStarts[$sourceLine]) * ($wrappedWidth - 1) }
+                        $outputRows = New-Object 'Collections.Generic.List[string]'; $starts = New-Object 'Collections.Generic.List[int]'
+                        foreach ($text in $all) {
+                            $starts.Add($outputRows.Count)
+                            foreach ($part in (Format-ToolkitText $text ($size.Width - 1) -Display)) { $outputRows.Add($part) }
+                        }
+                        $wrapped = $outputRows.ToArray(); $lineStarts = $starts.ToArray()
+                        if ($lineStarts.Count) { $offset = $lineStarts[$sourceLine] + [int][Math]::Floor($column / ($size.Width - 1)) }
+                    }
                     $wrappedWidth = $size.Width
                 }
                 $offset = [Math]::Max(0, [Math]::Min($offset, [Math]::Max(0, $wrapped.Count - $height)))
@@ -208,6 +231,31 @@ function Set-ToolkitActionConfirmation {
     if ($answer -ceq 'OFF') { $script:ToolkitConfirmActions = $false }
 }
 
+function Invoke-ToolkitTerminalImport {
+    $source = Read-ToolkitInput 'Local script/ZIP path or https:// URL' @('Imported scripts are saved inside the portable Scripts folder beside the toolkit.')
+    if ([string]::IsNullOrWhiteSpace($source)) { return }
+    $source = $source.Trim().Trim('"')
+    $folder = Read-ToolkitInput 'Target subfolder inside Scripts (optional, Enter for root)'
+    if ($null -eq $folder) { return }
+    try {
+        $imported = @()
+        if ($source -match '^https://') {
+            $sha = Read-ToolkitInput 'Expected SHA-256 checksum (optional, Enter to skip)'
+            if ($null -eq $sha) { return }
+            $imported = @(Import-ToolkitUrlScript -Url $source -Folder $folder.Trim() -ExpectedSha256 $sha.Trim())
+        }
+        else {
+            $imported = @(Import-ToolkitLocalScript -Path $source -Folder $folder.Trim())
+        }
+        Update-ToolkitCustomCatalog
+        $names = ($imported | ForEach-Object { $_.relativePath }) -join ', '
+        Wait-ToolkitAcknowledgement "Imported $($imported.Count) script(s): $names"
+    }
+    catch {
+        Wait-ToolkitAcknowledgement ('Import failed: ' + $_.Exception.Message)
+    }
+}
+
 function Start-ToolkitInterface {
     param([switch]$Basic)
     Initialize-ToolkitTerminal -Basic:$Basic
@@ -265,11 +313,17 @@ function Start-ToolkitInterface {
                     if ($_.sourceKind -eq 'CustomScript') { $label += ' [custom: ' + $_.relativePath + ']'; if (-not $_.available) { $label += ' [unavailable]' } }
                     [pscustomobject]@{ Label = $label; Value = $_ }
                 })
+                if ($category -eq 'Custom Scripts' -and -not $isSearch) {
+                    $items += [pscustomobject]@{ Label = '[Import script from file, ZIP or HTTPS URL]'; Value = '__IMPORT_CUSTOM__' }
+                }
                 $description = @()
                 if ($script:ToolkitCustomNotice) { $description = @($script:ToolkitCustomNotice) }
                 $choice = Read-ToolkitMenu $title $items $description $selected
                 $selected = $choice.Index
-                if ($choice.Action -eq 'Select') { $detail = $choice.Value; continue }
+                if ($choice.Action -eq 'Select') {
+                    if ($choice.Value -eq '__IMPORT_CUSTOM__') { Invoke-ToolkitTerminalImport; continue }
+                    $detail = $choice.Value; continue
+                }
                 if ($choice.Action -eq 'Back') { $category = ''; $isSearch = $false; $selected = 0; continue }
             }
             if ($choice.Action -eq 'Quit') { break }

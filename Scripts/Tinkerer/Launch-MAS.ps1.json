@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "name": "Microsoft Activation Scripts (MAS)",
+  "description": "Downloads and opens the interactive Microsoft Activation Scripts menu from https://get.activated.win with administrator permissions. Homepage: https://massgrave.dev/.",
+  "requiresAdmin": true,
+  "enabled": true
+}

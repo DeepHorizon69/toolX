@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "name": "Export support diagnostic report",
+  "description": "Collects OS, hardware, disk space, IP config, recent errors and minidumps into a timestamped .txt report.",
+  "requiresAdmin": false,
+  "enabled": true
+}

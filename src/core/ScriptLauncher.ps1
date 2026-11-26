@@ -57,7 +57,7 @@ function Invoke-ToolkitConsoleWorker {
         if (($RequireElevation -or $command.requiresAdmin) -and -not $admin) { throw 'This operation requires an administrator token.' }
         $capability = Get-ToolkitCapability $command
         if (-not $capability.Available) { throw $capability.Reason }
-        Write-Host "Windows Engineering Toolkit $($script:ToolkitVersion) | Operation console" -ForegroundColor Cyan
+        Write-Host "$((Get-ToolkitIdentity).Banner) | Operation console" -ForegroundColor Cyan
         Write-Host (ConvertTo-ToolkitSafeText $command.name) -ForegroundColor Cyan
         $privilegeColor = 'Gray'; if ($admin) { $privilegeColor = 'Yellow' }
         Write-Host "Privilege: $(if ($admin) { 'ADMINISTRATOR' } else { 'Standard user' })" -ForegroundColor $privilegeColor
@@ -110,6 +110,13 @@ function Invoke-ToolkitConsoleWorker {
             if ($spec.Arguments.Count) { $launch.ArgumentList = (($spec.Arguments | ForEach-Object { ConvertTo-ToolkitArgument $_ }) -join ' ') }
             Start-Process @launch | Out-Null
             Write-Host 'Administrative interface launched. Subsequent actions are outside the toolkit.'
+            $exitCode = 0
+        }
+        elseif ($command.targetId -eq 'system.full-specs') {
+            $records = @(Invoke-ToolkitPowerShellAction $command.targetId $values)
+            $size = Get-ToolkitTerminalSize; $width = 79
+            if ($null -ne $size) { $width = [Math]::Max(1, $size.Width - 1) }
+            Format-ToolkitSpecificationLayout @(Get-ToolkitSpecificationBlock $records) $width | Out-Host
             $exitCode = 0
         }
         else { Invoke-ToolkitPowerShellAction $command.targetId $values | Format-List | Out-Host; $exitCode = 0 }

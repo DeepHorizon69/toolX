@@ -19,7 +19,9 @@ function Start-ToolkitConsole {
     $json = ConvertTo-Json -InputObject ([pscustomobject]$Parameters) -Compress -Depth 4
     $payload = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
     if ($payload.Length -gt 8192) { throw 'Operation parameters are too large.' }
-    $arguments = @('-NoLogo', '-NoProfile', '-File', $script:ToolkitEntryPath, '-WorkerId', $OperationId, '-ParameterData', $payload)
+    $arguments = @('-NoLogo', '-NoProfile', '-File', $script:ToolkitEntryPath)
+    if ($script:ToolkitRoot) { $arguments += @('-AppRoot', $script:ToolkitRoot) }
+    $arguments += @('-WorkerId', $OperationId, '-ParameterData', $payload)
     if ($Elevated) { $arguments += '-RequireElevation' }
     if ($SkipActionConfirmation) { $arguments += '-SkipActionConfirmation' }
     $start = @{

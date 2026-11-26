@@ -1,6 +1,6 @@
 function Get-ToolkitWindowsExecutable {
     param([string]$Name)
-    if ($Name -notin @('ipconfig.exe', 'ping.exe', 'tracert.exe', 'arp.exe', 'route.exe', 'netstat.exe', 'resmon.exe', 'taskmgr.exe', 'mmc.exe', 'sfc.exe', 'dism.exe', 'chkdsk.exe', 'netsh.exe', 'cmd.exe', 'shutdown.exe')) { throw 'Executable is not in the built-in allowlist.' }
+    if ($Name -notin @('ipconfig.exe', 'ping.exe', 'tracert.exe', 'arp.exe', 'route.exe', 'netstat.exe', 'resmon.exe', 'taskmgr.exe', 'mmc.exe', 'sfc.exe', 'dism.exe', 'chkdsk.exe', 'netsh.exe', 'cmd.exe', 'shutdown.exe', 'powercfg.exe')) { throw 'Executable is not in the built-in allowlist.' }
     $system = Join-Path $env:SystemRoot 'System32'
     if ([Environment]::Is64BitOperatingSystem -and -not [Environment]::Is64BitProcess) { $system = Join-Path $env:SystemRoot 'Sysnative' }
     $path = Join-Path $system $Name

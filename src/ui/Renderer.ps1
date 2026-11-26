@@ -78,7 +78,7 @@ function Get-ToolkitHeader {
     $confirmation = 'Confirmations: ON'; $role = 'Secondary'
     if ($script:ToolkitConfirmActions -eq $false) { $confirmation = 'ACTION CONFIRMATIONS OFF'; $role = 'Warning' }
     elseif ($token.StartsWith('ADMINISTRATOR')) { $role = 'Warning' }
-    New-ToolkitRow (Format-ToolkitCell "Windows Engineering Toolkit $($script:ToolkitVersion)" $Width) 'Accent'
+    New-ToolkitRow (Format-ToolkitCell (Get-ToolkitIdentity).Banner $Width) 'Accent'
     New-ToolkitRow (Format-ToolkitCell "$token | $confirmation" $Width) $role
     New-ToolkitRow (Format-ToolkitCell $Title $Width) 'Primary'
     New-ToolkitRow ('-' * $Width) 'Border'
@@ -188,7 +188,7 @@ function New-ToolkitMenuFrame {
     $rows.Add((New-ToolkitRow (Format-ToolkitCell "$status | $range | Home/End, PgUp/PgDn" $width) 'Secondary'))
     $rows.Add((New-ToolkitRow (Format-ToolkitCell 'Up/Down: navigate | Enter: select | Esc: back' $width) 'Secondary'))
     $rows.Add((New-ToolkitRow (Format-ToolkitCell '/: search | R: refresh | Q: exit' $width) 'Secondary'))
-    $plain = @("Windows Engineering Toolkit $($script:ToolkitVersion)")
+    $plain = @((Get-ToolkitIdentity).Banner)
     $token = 'Standard user'
     if ($null -ne $script:ToolkitTerminalState -and $script:ToolkitTerminalState.Administrator) { $token = 'ADMINISTRATOR: children inherit this token' }
     $plain += $token
@@ -217,7 +217,7 @@ function New-ToolkitTextFrame {
         $text = ''; if ($index -lt $Footer.Count) { $text = $Footer[$index] }
         $rows.Add((New-ToolkitRow (Format-ToolkitCell $text $width) 'Secondary'))
     }
-    $plain = @("Windows Engineering Toolkit $($script:ToolkitVersion)", $Title)
+    $plain = @((Get-ToolkitIdentity).Banner, $Title)
     if ($null -ne $script:ToolkitTerminalState -and $script:ToolkitTerminalState.Administrator) { $plain += 'ADMINISTRATOR: children inherit this token' }
     if ($script:ToolkitConfirmActions -eq $false) { $plain += 'ACTION CONFIRMATIONS OFF' }
     return [pscustomobject]@{ Rows = $rows.ToArray(); PlainLines = @($plain + $Lines + @($Status) + $Footer); UseBasic = ($PreserveAll -and $wrapped.Count -gt $height); Size = $Size }

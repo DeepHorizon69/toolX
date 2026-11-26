@@ -1,4 +1,12 @@
 function Get-ToolkitFullSpecification {
+    param([ValidateSet('Full','Hardware','Firmware','Windows','Storage','Network')][string]$Scope = 'Full')
+    $includedSections = switch ($Scope) {
+        'Hardware' { @('Computer','Processor','Memory','Graphics','Board','Disk','Adapter','Battery') }
+        'Firmware' { @('Board','BIOS') }
+        'Windows' { @('Windows','Computer') }
+        'Storage' { @('Disk','Partition','Volume') }
+        'Network' { @('Adapter') }
+    }
     $sections = @(
         @{ Name = 'Windows'; Class = 'Win32_OperatingSystem'; Fields = @('Caption','Version','BuildNumber','OSArchitecture','LastBootUpTime') },
         @{ Name = 'Computer'; Class = 'Win32_ComputerSystem'; Fields = @('Manufacturer','Model','TotalPhysicalMemory','SystemType') },
@@ -13,16 +21,18 @@ function Get-ToolkitFullSpecification {
         @{ Name = 'Adapter'; Class = 'Win32_NetworkAdapter'; Fields = @('Name','NetConnectionID','NetEnabled','Speed') }
     )
     foreach ($section in $sections) {
+        if ($Scope -ne 'Full' -and $section.Name -notin $includedSections) { continue }
         try {
             $items = @(CimCmdlets\Get-CimInstance -ClassName $section.Class -OperationTimeoutSec 10 -ErrorAction Stop | Select-Object -First 64)
             if (-not $items.Count) { [pscustomobject]@{ Section = $section.Name; Field = ''; Value = 'No data'; Status = 'Unavailable' } }
-            foreach ($item in $items) {
-                foreach ($field in $section.Fields) { [pscustomobject]@{ Section = $section.Name; Field = $field; Value = $item.$field; Status = 'Reported' } }
+            for ($deviceIndex = 0; $deviceIndex -lt $items.Count; $deviceIndex++) {
+                $item = $items[$deviceIndex]
+                foreach ($field in $section.Fields) { [pscustomobject]@{ Section = $section.Name; DeviceIndex = $deviceIndex; Field = $field; Value = $item.$field; Status = 'Reported' } }
             }
         }
         catch { [pscustomobject]@{ Section = $section.Name; Field = ''; Value = $_.Exception.Message; Status = 'Unavailable' } }
     }
-    Get-ToolkitBatteryHealth
+    if ($Scope -eq 'Full' -or 'Battery' -in $includedSections) { Get-ToolkitBatteryHealth }
 }
 
 function Get-ToolkitBatteryHealth {
@@ -84,6 +94,46 @@ function Invoke-ToolkitTroubleshootingAction {
             catch { [pscustomobject]@{ Step = 'DNS'; Detail = $_.Exception.Message } }
             try { Invoke-ToolkitNetworkAction 'network.port' $Values }
             catch { [pscustomobject]@{ Step = 'TCP'; Detail = $_.Exception.Message } }
+        }
+        'troubleshooting.bsod' {
+            $minidump = Join-Path $env:SystemRoot 'Minidump'
+            if (Test-Path -LiteralPath $minidump -PathType Container) {
+                $dumps = @(Get-ChildItem -LiteralPath $minidump -Filter '*.dmp' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 20)
+                if ($dumps.Count) {
+                    foreach ($dump in $dumps) { [pscustomobject]@{ Source = 'Minidump'; Name = $dump.Name; SizeKiB = [Math]::Round($dump.Length / 1KB, 1); LastWriteTime = $dump.LastWriteTime } }
+                }
+                else { [pscustomobject]@{ Source = 'Minidump'; Detail = 'No .dmp files found.' } }
+            }
+            else { [pscustomobject]@{ Source = 'Minidump'; Detail = 'Minidump folder does not exist.' } }
+            $fullDump = Join-Path $env:SystemRoot 'MEMORY.DMP'
+            if (Test-Path -LiteralPath $fullDump -PathType Leaf) {
+                $item = Get-Item -LiteralPath $fullDump -Force -ErrorAction SilentlyContinue
+                if ($null -ne $item) { [pscustomobject]@{ Source = 'MEMORY.DMP'; Name = $item.Name; SizeMiB = [Math]::Round($item.Length / 1MB, 1); LastWriteTime = $item.LastWriteTime } }
+            }
+            try {
+                Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = @(1001, 41); StartTime = (Get-Date).AddDays(-30) } -MaxEvents 25 -ErrorAction Stop |
+                    Select-Object TimeCreated,Id,ProviderName,LevelDisplayName,Message
+            }
+            catch { [pscustomobject]@{ Source = 'SystemCrashEvents'; Detail = $_.Exception.Message } }
+        }
+        'troubleshooting.boot-history' {
+            $days = 7; if ($Values -and $Values.ContainsKey('days')) { $days = [int]$Values.days }
+            try {
+                Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = @(6005,6006,6008,1074,41,42,1); StartTime = (Get-Date).AddDays(-$days) } -MaxEvents 60 -ErrorAction Stop |
+                    ForEach-Object {
+                        $summary = (([string]$_.Message) -split "`r?`n")[0].Trim()
+                        [pscustomobject]@{ TimeCreated = $_.TimeCreated; Id = $_.Id; Provider = $_.ProviderName; Summary = $summary }
+                    }
+            }
+            catch { [pscustomobject]@{ BootHistory = 'Unavailable'; Detail = $_.Exception.Message } }
+        }
+        'troubleshooting.printers' {
+            try { Get-Service -Name 'Spooler' -ErrorAction Stop | Select-Object Name,Status,StartType }
+            catch { [pscustomobject]@{ Service = 'Spooler'; Detail = $_.Exception.Message } }
+            CimCmdlets\Get-CimInstance Win32_Printer -OperationTimeoutSec 15 | Select-Object Name,PortName,PrinterStatus,WorkOffline,Default
+            $jobs = @(CimCmdlets\Get-CimInstance Win32_PrintJob -OperationTimeoutSec 15)
+            if ($jobs.Count) { $jobs | Select-Object JobId,Name,Document,JobStatus,TimeSubmitted }
+            else { 'No queued print jobs were reported.' }
         }
         default { throw 'Unknown troubleshooting operation.' }
     }

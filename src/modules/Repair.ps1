@@ -40,3 +40,57 @@ function Invoke-ToolkitCleanup {
         catch { [pscustomobject]@{ Path = $candidate.Path; Status = 'Skipped'; Detail = $_.Exception.Message } }
     }
 }
+
+function Invoke-ToolkitRepairAction {
+    param([string]$TargetId)
+    switch ($TargetId) {
+        'repair.restart-spooler' {
+            $queueRoot = Join-Path $env:SystemRoot 'System32\spool\PRINTERS'
+            $verifiedRoot = Test-ToolkitLocalPath -Path $queueRoot -Kind Directory
+            Test-ToolkitNoReparsePoint (Split-Path $verifiedRoot -Parent) $verifiedRoot
+            Stop-Service -Name 'Spooler' -Force -ErrorAction Stop
+            $removed = 0; $skipped = 0
+            try {
+                foreach ($filePath in [IO.Directory]::EnumerateFiles($verifiedRoot)) {
+                    try {
+                        $item = Get-Item -LiteralPath $filePath -Force -ErrorAction Stop
+                        if ($item.PSIsContainer -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { $skipped++; continue }
+                        Remove-Item -LiteralPath $item.FullName -Force -ErrorAction Stop
+                        $removed++
+                    }
+                    catch { $skipped++ }
+                }
+            }
+            finally { Start-Service -Name 'Spooler' -ErrorAction Stop }
+            [pscustomobject]@{ Service = 'Spooler'; QueuePath = $verifiedRoot; RemovedFiles = $removed; SkippedFiles = $skipped; FinalStatus = [string](Get-Service -Name 'Spooler').Status }
+        }
+        'repair.icon-cache' {
+            $local = [Environment]::GetFolderPath('LocalApplicationData')
+            if (-not $local) { throw 'LocalApplicationData is unavailable.' }
+            $cacheDir = Test-ToolkitLocalPath -Path (Join-Path $local 'Microsoft\Windows\Explorer') -Kind Directory
+            Test-ToolkitNoReparsePoint $local $cacheDir
+            Get-Process -Name 'explorer' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Milliseconds 500
+            $removed = 0; $skipped = 0
+            try {
+                foreach ($filePath in [IO.Directory]::EnumerateFiles($cacheDir)) {
+                    $name = [IO.Path]::GetFileName($filePath)
+                    if ($name -notlike 'iconcache_*.db' -and $name -notlike 'thumbcache_*.db') { continue }
+                    try {
+                        $item = Get-Item -LiteralPath $filePath -Force -ErrorAction Stop
+                        if ($item.PSIsContainer -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { $skipped++; continue }
+                        Remove-Item -LiteralPath $item.FullName -Force -ErrorAction Stop
+                        $removed++
+                    }
+                    catch { $skipped++ }
+                }
+            }
+            finally {
+                $explorerPath = Join-Path $env:SystemRoot 'explorer.exe'
+                if (Test-Path -LiteralPath $explorerPath -PathType Leaf) { Start-Process -FilePath $explorerPath | Out-Null }
+            }
+            [pscustomobject]@{ CachePath = $cacheDir; RemovedFiles = $removed; SkippedFiles = $skipped; ExplorerRestarted = $true }
+        }
+        default { throw 'Unknown repair operation.' }
+    }
+}

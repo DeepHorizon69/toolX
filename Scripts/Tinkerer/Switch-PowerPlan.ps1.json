@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "name": "Switch Windows power plan",
+  "description": "Interactive menu to view active and available power schemes and switch via powercfg /setactive.",
+  "requiresAdmin": false,
+  "enabled": true
+}

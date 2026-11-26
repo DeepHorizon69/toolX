@@ -19,6 +19,12 @@ function New-ToolkitBundleText {
     $encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
     [void]$builder.AppendLine('$script:ToolkitRegistry = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(''' + $encoded + ''')) | ConvertFrom-Json')
     if ($manifest.version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid application version.' }
+    $productName = ([string]$manifest.productName).Replace("'", "''")
+    $channel = ([string]$manifest.channel).Replace("'", "''")
+    $signature = ([string]$manifest.signature).Replace("'", "''")
+    [void]$builder.AppendLine('$script:ToolkitProductName = ''' + $productName + '''')
+    [void]$builder.AppendLine('$script:ToolkitChannel = ''' + $channel + '''')
+    [void]$builder.AppendLine('$script:ToolkitSignature = ''' + $signature + '''')
     [void]$builder.AppendLine('$script:ToolkitVersion = ''' + $manifest.version + '''')
     $bundle = $entry.Substring(0, $start) + $builder.ToString() + $entry.Substring($end + $endMarker.Length)
     return $bundle.Replace("`r`n", "`n").Replace("`r", "`n").Replace("`n", "`r`n")

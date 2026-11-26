@@ -34,15 +34,16 @@ function Write-ToolkitQueueText {
 function Invoke-ToolkitPowerShellAction {
     param([string]$TargetId, [hashtable]$Values)
     switch -Wildcard ($TargetId) {
-        'system.*' { Invoke-ToolkitSystemAction $TargetId }
+        'system.*' { Invoke-ToolkitSystemAction $TargetId $Values }
         'network.*' { Invoke-ToolkitNetworkAction $TargetId $Values }
         'hardware.*' { Invoke-ToolkitHardwareAction $TargetId }
         'storage.*' { Invoke-ToolkitStorageAction $TargetId $Values }
         'processes.*' { Invoke-ToolkitProcessesAction $TargetId }
         'security.*' {
             if ($TargetId -in @('security.firewall-control','security.firewall-restore','security.defender-control','security.defender-restore')) { Invoke-ToolkitControlAction $TargetId $Values }
-            else { Invoke-ToolkitSecurityAction $TargetId }
+            else { Invoke-ToolkitSecurityAction $TargetId $Values }
         }
+        'repair.*' { Invoke-ToolkitRepairAction $TargetId }
         'troubleshooting.*' { Invoke-ToolkitTroubleshootingAction $TargetId $Values }
         'updates.*' { Invoke-ToolkitControlAction $TargetId $Values }
         'power.*' { Invoke-ToolkitControlAction $TargetId $Values }
@@ -104,6 +105,13 @@ function Invoke-ToolkitBackgroundAction {
     try {
         if ($Command.sourceKind -ne 'BuiltIn' -or $Command.risk -ne 'ReadOnly' -or $Command.requiresAdmin) { throw 'This operation must use the confirmed console path.' }
         if ($Command.executionType -eq 'Native') { Invoke-ToolkitNativeCaptured (Get-ToolkitNativeSpec $Command.targetId $Values) $Queue $State $Control }
+        elseif ($Command.targetId -eq 'system.full-specs') {
+            $State.Specifications = New-Object 'Collections.Generic.List[object]'
+            Invoke-ToolkitPowerShellAction $Command.targetId $Values | ForEach-Object {
+                if ($State.Specifications.Count -lt 4096) { $State.Specifications.Add($_) }
+                else { $State.Truncated = $true }
+            }
+        }
         else {
             Invoke-ToolkitPowerShellAction $Command.targetId $Values | Format-List | Out-String -Stream -Width 120 | ForEach-Object { Write-ToolkitQueueText $Queue $State $_ }
         }
@@ -157,7 +165,9 @@ function Complete-ToolkitExecution {
         if ($null -ne $Execution.StopHandle) { $Execution.PowerShell.EndStop($Execution.StopHandle) }
         if ($Execution.DeadlineExceeded) { $Execution.State.Status = 'TimedOut' }
         elseif ($Execution.State.Cancelled) { $Execution.State.Status = 'Cancelled' }
-        return [pscustomobject]@{ CommandId = $Execution.Command.id; ExecutionId = [guid]::NewGuid().ToString(); Started = $Execution.Started; Elapsed = ([DateTime]::UtcNow - $Execution.Started); Status = $Execution.State.Status; ExitCode = $Execution.State.ExitCode; Truncated = $Execution.State.Truncated }
+        $specifications = @()
+        if ($null -ne $Execution.State.Specifications) { $specifications = $Execution.State.Specifications.ToArray() }
+        return [pscustomobject]@{ CommandId = $Execution.Command.id; ExecutionId = [guid]::NewGuid().ToString(); Started = $Execution.Started; Elapsed = ([DateTime]::UtcNow - $Execution.Started); Status = $Execution.State.Status; ExitCode = $Execution.State.ExitCode; Truncated = $Execution.State.Truncated; Specifications = $specifications }
     }
     finally { $Execution.PowerShell.Dispose(); $Execution.Runspace.Dispose(); $Execution.Queue.Dispose() }
 }

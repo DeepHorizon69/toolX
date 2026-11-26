@@ -1,11 +1,15 @@
 {
-  "version": "0.2.1",
+  "productName": "TOOLX Windows Edition",
+  "channel": "Alpha",
+  "version": "0.2.2",
+  "signature": "by ALSA",
   "files": [
     "src/core/Validation.ps1",
     "src/core/Registry.ps1",
     "src/core/Compatibility.ps1",
     "src/core/Privileges.ps1",
     "src/core/CustomScripts.ps1",
+    "src/core/ScriptImporter.ps1",
     "src/core/ScriptLauncher.ps1",
     "src/modules/System.ps1",
     "src/modules/Network.ps1",
@@ -20,6 +24,8 @@
     "src/core/Executor.ps1",
     "src/ui/Terminal.ps1",
     "src/ui/Navigation.ps1",
-    "src/ui/Renderer.ps1"
+    "src/ui/Renderer.ps1",
+    "src/ui/Specifications.ps1",
+    "src/ui/Gui.ps1"
   ]
 }

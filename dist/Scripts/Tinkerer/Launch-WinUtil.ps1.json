@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "name": "Chris Titus Tech WinUtil",
+  "description": "Downloads and launches the upstream Chris Titus Tech Windows Utility (https://christitus.com/win) in an elevated session.",
+  "requiresAdmin": true,
+  "enabled": true
+}

@@ -1,3 +1,9 @@
+function ConvertFrom-ToolkitEdidText {
+    param([AllowNull()][object]$Bytes)
+    if ($null -eq $Bytes) { return '' }
+    return ((-join ($Bytes | Where-Object { $_ -gt 0 } | ForEach-Object { [char]$_ })).Trim())
+}
+
 function Invoke-ToolkitHardwareAction {
     param([string]$TargetId)
     switch ($TargetId) {
@@ -17,6 +23,43 @@ function Invoke-ToolkitHardwareAction {
                 }
                 catch { "Reliability counters unavailable: $($_.Exception.Message)" }
             }
+        }
+        'hardware.usb' {
+            CimCmdlets\Get-CimInstance Win32_PnPEntity -Filter "DeviceID LIKE 'USB%'" -OperationTimeoutSec 15 |
+                Sort-Object Name |
+                Select-Object -First 200 Name,Manufacturer,Status,PNPClass,DeviceID
+        }
+        'hardware.monitors' {
+            try {
+                $monitors = @(CimCmdlets\Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorID -OperationTimeoutSec 10 -ErrorAction Stop)
+                if (-not $monitors.Count) { 'No WMI monitor EDID records were reported.' }
+                foreach ($monitor in $monitors) {
+                    [pscustomobject]@{
+                        Manufacturer = (ConvertFrom-ToolkitEdidText $monitor.ManufacturerName)
+                        Model = (ConvertFrom-ToolkitEdidText $monitor.UserFriendlyName)
+                        Serial = (ConvertFrom-ToolkitEdidText $monitor.SerialNumberID)
+                        YearOfManufacture = $monitor.YearOfManufacture
+                        WeekOfManufacture = $monitor.WeekOfManufacture
+                    }
+                }
+            }
+            catch { [pscustomobject]@{ MonitorEDID = 'Unavailable'; Detail = $_.Exception.Message } }
+            CimCmdlets\Get-CimInstance Win32_VideoController -OperationTimeoutSec 10 | Select-Object Name,CurrentHorizontalResolution,CurrentVerticalResolution,CurrentRefreshRate
+        }
+        'hardware.tpm' {
+            $secureBoot = 'Unavailable'
+            try { $secureBoot = [string](Confirm-SecureBootUEFI) }
+            catch { $secureBoot = $_.Exception.Message }
+            try {
+                $tpm = Get-Tpm -ErrorAction Stop
+                [pscustomobject]@{
+                    SecureBoot = $secureBoot
+                    TpmPresent = $tpm.TpmPresent; TpmReady = $tpm.TpmReady
+                    TpmEnabled = $tpm.TpmEnabled; TpmActivated = $tpm.TpmActivated
+                    ManufacturerIdTxt = $tpm.ManufacturerIdTxt; ManagedAuthLevel = $tpm.ManagedAuthLevel
+                }
+            }
+            catch { [pscustomobject]@{ SecureBoot = $secureBoot; TpmStatus = 'Unavailable'; Detail = $_.Exception.Message } }
         }
         default { throw 'Unknown hardware operation.' }
     }

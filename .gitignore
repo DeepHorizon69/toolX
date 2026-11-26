@@ -1,5 +1,14 @@
 .tools/
 .build/
 .restore-points/
+/anti-slop/
 TestResults.xml
+TestResults/
+test-results/
+coverage/
+*.trx
+*.coverage
+*.coveragexml
+*.log
+*.lnk
 *.user

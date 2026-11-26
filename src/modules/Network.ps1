@@ -35,6 +35,58 @@ function Invoke-ToolkitNetworkAction {
                 if ($null -ne $async) { $async.AsyncWaitHandle.Close() }
             }
         }
+        'network.listening-ports' {
+            $procMap = @{}
+            foreach ($proc in (Get-Process -ErrorAction SilentlyContinue)) { $procMap[[int]$proc.Id] = $proc.ProcessName }
+            $rows = New-Object 'Collections.Generic.List[object]'
+            foreach ($tcp in (NetTCPIP\Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue)) {
+                $rows.Add([pscustomobject]@{
+                    Protocol = 'TCP'; LocalAddress = $tcp.LocalAddress; LocalPort = [int]$tcp.LocalPort
+                    OwningProcess = [int]$tcp.OwningProcess; ProcessName = $procMap[[int]$tcp.OwningProcess]
+                })
+            }
+            foreach ($udp in (NetTCPIP\Get-NetUDPEndpoint -ErrorAction SilentlyContinue)) {
+                $rows.Add([pscustomobject]@{
+                    Protocol = 'UDP'; LocalAddress = $udp.LocalAddress; LocalPort = [int]$udp.LocalPort
+                    OwningProcess = [int]$udp.OwningProcess; ProcessName = $procMap[[int]$udp.OwningProcess]
+                })
+            }
+            $rows | Sort-Object Protocol,LocalPort | Select-Object -First 300
+        }
+        'network.wifi' {
+            $netsh = Get-ToolkitWindowsExecutable 'netsh.exe'
+            '--- Active WLAN interfaces ---'
+            & $netsh wlan show interfaces 2>&1 | ForEach-Object { [string]$_ }
+            ''
+            '--- Saved WLAN profiles ---'
+            & $netsh wlan show profiles 2>&1 | ForEach-Object { [string]$_ }
+        }
+        'network.hosts' {
+            $hostsPath = Join-Path $env:SystemRoot 'System32\drivers\etc\hosts'
+            if (-not (Test-Path -LiteralPath $hostsPath -PathType Leaf)) { return [pscustomobject]@{ Path = $hostsPath; Status = 'Missing' } }
+            $lines = @(Get-Content -LiteralPath $hostsPath -ErrorAction Stop)
+            $active = @($lines | Where-Object { $_ -notmatch '^\s*(#|$)' })
+            [pscustomobject]@{ Path = $hostsPath; TotalLines = $lines.Count; ActiveEntryCount = $active.Count; ActiveEntries = $(if ($active.Count) { $active -join '; ' } else { 'No active custom host entries.' }) }
+        }
+        'network.proxy' {
+            $internet = Get-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -ErrorAction SilentlyContinue
+            [pscustomobject]@{
+                UserProxyEnabled = [bool]($internet.ProxyEnable -eq 1)
+                UserProxyServer = $internet.ProxyServer
+                UserProxyOverride = $internet.ProxyOverride
+                AutoConfigURL = $internet.AutoConfigURL
+            }
+            $netsh = Get-ToolkitWindowsExecutable 'netsh.exe'
+            '--- WinHTTP proxy ---'
+            & $netsh winhttp show proxy 2>&1 | ForEach-Object { [string]$_ }
+        }
+        'network.dhcp-renew' {
+            $ipconfig = Get-ToolkitWindowsExecutable 'ipconfig.exe'
+            & $ipconfig /release 2>&1 | ForEach-Object { [string]$_ }
+            if ($LASTEXITCODE -ne 0) { throw "ipconfig /release returned exit code $LASTEXITCODE." }
+            & $ipconfig /renew 2>&1 | ForEach-Object { [string]$_ }
+            if ($LASTEXITCODE -ne 0) { throw "ipconfig /renew returned exit code $LASTEXITCODE." }
+        }
         default { throw 'Unknown network operation.' }
     }
 }
@@ -64,6 +116,7 @@ function Get-ToolkitNativeSpec {
             $arguments = @($Values.drive + ':')
         }
         'repair.winsock' { $name = 'netsh.exe'; $arguments = @('winsock','reset') }
+        'repair.tcpip-reset' { $name = 'netsh.exe'; $arguments = @('int','ip','reset') }
         default { throw 'Unknown native operation.' }
     }
     return [pscustomobject]@{ FileName = (Get-ToolkitWindowsExecutable $name); Arguments = [string[]]$arguments }

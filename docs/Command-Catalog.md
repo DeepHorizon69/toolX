@@ -1,6 +1,6 @@
-# Built-in command catalog (v0.2)
+# Built-in command catalog (Alpha 0.2.2)
 
-66 built-in entries. Runtime availability depends on Windows features, edition, policy and permissions. Read-only describes intent; Windows may write operational logs. Administrative interfaces allow changes outside toolkit control.
+91 built-in entries: 64 ReadOnly, 13 SystemModification and 14 HighRisk. Runtime availability depends on Windows features, edition, policy and permissions. Read-only describes intent; Windows may write operational logs. Administrative interfaces allow changes outside toolkit control.
 
 | ID | Name | Administrator | Risk | Cost |
 |---|---|---|---|---|
@@ -70,5 +70,32 @@
 | power.status | Power countdown status | Current token / external tool | ReadOnly | Variable |
 | power.force-restart | Force restart now | Required | HighRisk | Variable |
 | maintenance.managed-changes | Toolbox changes and restoration status | Current token / external tool | ReadOnly | Variable |
+| system.activation | Windows activation and license | Current token / external tool | ReadOnly | Quick |
+| system.drivers | Signed and third-party drivers | Current token / external tool | ReadOnly | Variable |
+| system.installed-apps | Installed applications | Current token / external tool | ReadOnly | Quick |
+| system.power-plans | Power plans and sleep states | Current token / external tool | ReadOnly | Quick |
+| network.listening-ports | Listening ports and processes | Current token / external tool | ReadOnly | Quick |
+| network.wifi | Wi-Fi radio and saved profiles | Current token / external tool | ReadOnly | Quick |
+| network.hosts | Windows hosts file | Current token / external tool | ReadOnly | Quick |
+| network.proxy | System and WinHTTP proxy | Current token / external tool | ReadOnly | Quick |
+| network.dhcp-renew | Release and renew DHCP lease | Required | SystemModification | Variable |
+| hardware.usb | Connected USB devices | Current token / external tool | ReadOnly | Quick |
+| hardware.monitors | Connected displays and EDID | Current token / external tool | ReadOnly | Quick |
+| hardware.tpm | TPM and Secure Boot status | Required | ReadOnly | Quick |
+| storage.large-files | Largest files in directory | Current token / external tool | ReadOnly | Variable |
+| storage.shares | Network shares and mapped drives | Current token / external tool | ReadOnly | Quick |
+| processes.top-resources | Top CPU and memory processes | Current token / external tool | ReadOnly | Quick |
+| processes.scheduled-tasks | Non-Microsoft scheduled tasks | Current token / external tool | ReadOnly | Quick |
+| processes.stopped-auto-services | Stopped automatic services | Current token / external tool | ReadOnly | Quick |
+| troubleshooting.bsod | BSOD crash and minidump history | Current token / external tool | ReadOnly | Variable |
+| troubleshooting.boot-history | Boot, shutdown and wake history | Current token / external tool | ReadOnly | Variable |
+| troubleshooting.printers | Print Spooler and print queue | Current token / external tool | ReadOnly | Quick |
+| security.local-admins | Local Administrators members | Current token / external tool | ReadOnly | Quick |
+| security.certificates | Expiring certificates | Current token / external tool | ReadOnly | Quick |
+| repair.restart-spooler | Restart Print Spooler and clear queue | Required | SystemModification | Quick |
+| repair.icon-cache | Rebuild icon and thumbnail cache | Current token / external tool | SystemModification | Quick |
+| repair.tcpip-reset | Reset TCP/IP stack | Required | HighRisk | Quick |
 
-Metadata lives in `src/config/commands.json`. Target policies and handlers must be updated together for new capabilities. The TUI needs no command-specific dispatch changes. Custom scripts occupy their own namespace.
+Metadata lives in `src/config/commands.json`. Target policies and handlers must be updated together for new capabilities. The TUI and GUI need no command-specific dispatch changes. Custom scripts occupy their own namespace.
+
+`system.full-specs` accepts the optional Choice parameter `scope`: `Full` (default), `Hardware`, `Firmware`, `Windows`, `Storage`, or `Network`. Firmware reports motherboard and BIOS information; other modes query only their corresponding specification sections. `system.drivers` accepts `scope` (`ThirdParty` default, or `All`). `storage.large-files` accepts `path` and `top` (1-100, default 25). `troubleshooting.boot-history` accepts `days` (1-30, default 7). `security.certificates` accepts `days` (1-365, default 90).
