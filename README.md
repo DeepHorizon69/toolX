@@ -1,8 +1,12 @@
-# TOOLX Windows Edition (Alpha 0.2.2) | by ALSA
+# TOOLX Windows Edition (Alpha 0.2.3) | by ALSA
+
+**Alpha 0.2.3, major change:** TOOLX has been rewritten in C#/.NET with a WPF GUI, CLI, compiled recovery worker and IT support reports. Source is in [`native/`](native/). See [build/run instructions](docs/Native-Rewrite.md) and [verification status](docs/Native-Verification.md). Run `native\publish.cmd` to generate self-contained x86/x64 ZIP packages under ignored `artifacts/`. This remains a preview while native Windows-version, UAC and recovery acceptance checks are completed.
+
+## Legacy PowerShell distribution (Alpha 0.2.2)
 
 A portable Windows PowerShell toolbox with graphical and terminal interfaces, 91 built-in diagnostics, controls and administrative shortcuts, plus local custom PowerShell and batch scripts. There are no third-party runtime downloads, telemetry, or automatic updates. Requested persistent controls create protected local recovery files and Windows scheduled tasks.
 
-## Latest build
+## Legacy build
 
 **Current build: TOOLX Windows Edition Alpha 0.2.2 (by ALSA), compact portable executables**, November 26, 2026. The `dist` folder ships two standalone `.exe` binaries (`Toolkit.exe` for GUI and `Toolkit.CLI.exe` for terminal) plus a portable `Scripts` folder (`IT-Support` and `Tinkerer`). Each launch extracts its embedded script to a unique session folder in `%TEMP%`, verifies its SHA-256, and attempts to remove the folder on exit. Explicitly requested persistent controls also create the recovery files and scheduled tasks described below.
 

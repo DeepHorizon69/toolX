@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>0.2.3</Version>
+    <Company>ALSA</Company>
+    <Product>TOOLX Windows Edition</Product>
+    <Deterministic>true</Deterministic>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <NuGetAudit>true</NuGetAudit>
+    <RestorePackagesPath>$(MSBuildThisFileDirectory)..\.tools\nuget</RestorePackagesPath>
+  </PropertyGroup>
+</Project>

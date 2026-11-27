@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><AssemblyName>Toolkit.CLI</AssemblyName></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../ToolX.Core/ToolX.Core.csproj" /></ItemGroup>
+</Project>

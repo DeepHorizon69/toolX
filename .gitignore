@@ -12,3 +12,7 @@ coverage/
 *.log
 *.lnk
 *.user
+**/bin/
+**/obj/
+/artifacts/
+/product/

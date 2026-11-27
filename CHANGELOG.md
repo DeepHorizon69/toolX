@@ -1,5 +1,14 @@
 # Changes
 
+## Alpha 0.2.3 (by ALSA), November 27, 2026
+
+- Major change: rewrote the 91 built-in command handlers in C#/.NET, with a shared core, classic MMC-style WPF GUI, CLI and separate elevated/recovery worker. Built-ins no longer depend on PowerShell; user scripts remain optional and follow Windows policy.
+- Added Indonesian/English interfaces, System/Light/Dark themes, IT support check batches, standalone HTML/JSON reports and before/after comparison.
+- Added transactional script imports, compiled Task Scheduler recovery, protected snapshots and legacy-job coexistence. Existing PowerShell Alpha 0.2.2 sources and distribution remain available.
+- Added pinned SDK configuration, native build/publish commands, self-contained x86/x64 packaging, checksum manifests and optional publisher signing. Generated packages, extracted product copies and development caches stay local.
+- Verification: 115 fixture/read-only checks and 784 WPF layout cases passed during rewrite development. Windows-version VM coverage, live UAC/recovery/reboot acceptance and publisher signing remain outstanding; see `docs/Native-Verification.md`.
+- Replaced the rewrite's provisional 0.3.0 label with the requested release version 0.2.3.
+
 ## Alpha 0.2.2 (by ALSA), November 26, 2026
 
 - Branded the toolkit as **TOOLX Windows Edition**, bumped version to **Alpha 0.2.2**, and added the **by ALSA** signature across the GUI window/title bar, Terminal header, operation console banner, `-Version` / `-Help` output, support reports, and compiled PE `VersionInfo` assembly metadata (`Toolkit.exe` and `Toolkit.CLI.exe`).

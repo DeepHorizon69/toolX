@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><UseWPF>true</UseWPF><AssemblyName>ToolX.Gui.Tests</AssemblyName></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../ToolX.Gui/ToolX.Gui.csproj" /></ItemGroup>
+</Project>

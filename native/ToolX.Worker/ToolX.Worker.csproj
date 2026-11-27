@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><AssemblyName>Toolkit.Worker</AssemblyName></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../ToolX.Core/ToolX.Core.csproj" /></ItemGroup>
+</Project>
